@@ -1,4 +1,4 @@
-COMPOSE_VOLUME=gaia-postgres
+COMPOSE_VOLUME=test-postgres
 dev.full: clean build run
 dev.lite: clean run
 clean:
