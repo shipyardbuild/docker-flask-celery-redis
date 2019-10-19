@@ -1,34 +1,42 @@
 version: "3"
+
 services:
+
   web:
     build:
-      context: ./api
+      context: api
       dockerfile: Dockerfile
     restart: always
-    ports:
-     - "5001:5001"
     depends_on:
       - redis
+    volumes:
+      - './api:/api'
+    ports:
+     - "5001:5001"
+
   worker:
     build:
       context: celery-queue
       dockerfile: Dockerfile
     depends_on:
       - redis
+
   monitor:
     build:
       context: celery-queue
       dockerfile: Dockerfile
-    ports:
-     - "5555:5555"
     entrypoint: flower
     command:  -A tasks --port=5555 --broker=redis://redis:6379/0
     depends_on:
       - redis
+    ports:
+     - "5555:5555"
+
   redis:
     image: 'redis:4-alpine'
     ports:
       - '6379'
+
   postgres:
     image: 'postgres:9.6-alpine'
     environment:
@@ -40,5 +48,6 @@ services:
       - 'test-postgres:/var/lib/postgresql/data/pgdata'
     ports:
       - '5432'
+
 volumes:
   test-postgres:
